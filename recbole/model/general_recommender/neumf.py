@@ -70,8 +70,10 @@ class NeuMF(GeneralRecommender):
             self.predict_layer = nn.Linear(self.mf_embedding_size, 1)
         elif self.mlp_train:
             self.predict_layer = nn.Linear(self.mlp_hidden_size[-1], 1)
-        self.sigmoid = nn.Sigmoid()
-        self.loss = nn.BCEWithLogitsLoss()
+        # self.sigmoid = nn.Sigmoid()
+        # self.loss = nn.BCEWithLogitsLoss()
+        # Andreas: use squared loss for training
+        self.loss = nn.MSELoss()
 
         # parameters initialization
         if self.use_pretrain:
@@ -152,7 +154,9 @@ class NeuMF(GeneralRecommender):
     def predict(self, interaction):
         user = interaction[self.USER_ID]
         item = interaction[self.ITEM_ID]
-        predict = self.sigmoid(self.forward(user, item))
+        # predict = self.sigmoid(self.forward(user, item))
+        # Andreas: use identity as activation function in output layer
+        predict = self.forward(user, item)
         return predict
 
     def dump_parameters(self):

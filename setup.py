@@ -51,12 +51,12 @@ if on_rtd:
 
 setup(
     name="recbole",
-    version="1.2.1",  # please remember to edit recbole/__init__.py in response, once updating the version
+    version="1.2.2",  # please remember to edit recbole/__init__.py in response, once updating the version
     description="A unified, comprehensive and efficient recommendation library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/RUCAIBox/RecBole",
-    author="RecBoleTeam",
+    url="https://github.com/aalfons/RecBole",
+    author="RecBoleTeam with modifications by Andreas Alfons",
     author_email="recbole@outlook.com",
     packages=[package for package in find_packages() if package.startswith("recbole")],
     include_package_data=True,
