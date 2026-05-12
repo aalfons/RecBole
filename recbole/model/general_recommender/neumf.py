@@ -72,8 +72,23 @@ class NeuMF(GeneralRecommender):
             self.predict_layer = nn.Linear(self.mlp_hidden_size[-1], 1)
         # self.sigmoid = nn.Sigmoid()
         # self.loss = nn.BCEWithLogitsLoss()
-        # Andreas: use squared loss for training
-        self.loss = nn.MSELoss()
+        # Andreas: I added a setting in the config file to change the loss 
+        # function and accordingly the activation function in the prediction 
+        # layer for explicit feedback with ratings (regression task)
+        if config["train_loss"] == "MSE":
+            self.sigmoid = nn.Identity()
+            self.loss = nn.MSELoss()
+        elif config["train_loss"] == "Huber":
+            self.sigmoid = nn.Identity()
+            self.loss = nn.HuberLoss()
+        elif config["train_loss"] == "L1":
+            self.sigmoid = nn.Identity()
+            self.loss = nn.L1Loss()
+        else: 
+            # standard behavior for implicit feedback (classification task) 
+            # if the additional setting is not present in the config file
+            self.sigmoid = nn.Sigmoid()
+            self.loss = nn.BCEWithLogitsLoss()
 
         # parameters initialization
         if self.use_pretrain:
@@ -154,9 +169,7 @@ class NeuMF(GeneralRecommender):
     def predict(self, interaction):
         user = interaction[self.USER_ID]
         item = interaction[self.ITEM_ID]
-        # predict = self.sigmoid(self.forward(user, item))
-        # Andreas: use identity as activation function in output layer
-        predict = self.forward(user, item)
+        predict = self.sigmoid(self.forward(user, item))
         return predict
 
     def dump_parameters(self):
